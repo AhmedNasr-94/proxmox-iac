@@ -1,0 +1,21 @@
+---
+- name: Deploy Portainer
+  hosts: devops
+  become: true
+  tasks:
+    - name: Create app directory
+      ansible.builtin.file:
+        path: /opt/portainer
+        state: directory
+        mode: "0755"
+
+    - name: Copy compose file
+      ansible.builtin.copy:
+        src: files/portainer-compose.yml
+        dest: /opt/portainer/docker-compose.yml
+        mode: "0644"
+
+    - name: Start Portainer
+      community.docker.docker_compose_v2:
+        project_src: /opt/portainer
+        state: present

@@ -1,0 +1,27 @@
+---
+- name: Deploy monitoring stack
+  hosts: devops
+  become: true
+  tasks:
+    - name: Create app directory
+      ansible.builtin.file:
+        path: /opt/monitoring
+        state: directory
+        mode: "0755"
+
+    - name: Copy compose file
+      ansible.builtin.copy:
+        src: files/monitoring-compose.yml
+        dest: /opt/monitoring/docker-compose.yml
+        mode: "0644"
+
+    - name: Copy Prometheus config
+      ansible.builtin.copy:
+        src: files/prometheus.yml
+        dest: /opt/monitoring/prometheus.yml
+        mode: "0644"
+
+    - name: Start the stack
+      community.docker.docker_compose_v2:
+        project_src: /opt/monitoring
+        state: present
