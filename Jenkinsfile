@@ -14,7 +14,7 @@ pipeline {
           string(credentialsId: 'proxmox-ssh-password', variable: 'PROXMOX_VE_SSH_PASSWORD')
         ]) {
           sh 'terraform init -input=false -backend-config="path=/var/jenkins_home/tfstate/devops-vm.tfstate"'
-          sh 'terraform plan -input=false'
+          sh 'terraform apply -input=false -auto-approve'
         }
       }
     }
