@@ -19,10 +19,18 @@ pipeline {
       }
     }
 
-    stage('Ansible ping') {
+        stage('Wait for VM') {
       steps {
         dir('ansible') {
-          sh 'ansible devops -i inventory.ini -m ping'
+          sh '''
+            for i in $(seq 1 20); do
+              ansible devops -i inventory.ini -m ping && exit 0
+              echo "VM not ready yet, waiting 10s..."
+              sleep 10
+            done
+            echo "VM never became reachable"
+            exit 1
+          '''
         }
       }
     }
